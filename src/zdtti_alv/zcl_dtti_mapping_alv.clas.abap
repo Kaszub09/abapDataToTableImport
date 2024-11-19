@@ -57,8 +57,7 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
       map->key_info = COND #( WHEN map->is_key = abap_true THEN '@3V@' ELSE '' ).
       map->required_info = COND #( WHEN map->is_required = abap_true THEN '@8R@' ELSE '' ).
       map->cell_style = VALUE #( ( fieldname = 'SOURCE_FIELD_BUTTON' style = cl_gui_alv_grid=>mc_style_button ) ).
-      map->is_alpha = COND #( WHEN map->type IS INSTANCE OF cl_abap_elemdescr AND CAST cl_abap_elemdescr( map->type )->edit_mask = '==ALPHA' THEN abap_true
-                              ELSE abap_false ).
+      map->is_alpha = xsdbool( map->type IS INSTANCE OF cl_abap_elemdescr AND CAST cl_abap_elemdescr( map->type )->edit_mask = '==ALPHA' ).
     ENDLOOP.
     refresh_mapping_metainfo( VALUE #( ) ).
 

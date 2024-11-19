@@ -60,7 +60,6 @@ CLASS zcl_data_to_table_import DEFINITION PUBLIC FINAL CREATE PUBLIC.
       target TYPE REF TO zif_dtti_target.
 
     DATA:
-      grid           TYPE REF TO zcl_ea_alv_table,
       user_confirmed TYPE abap_bool.
 ENDCLASS.
 
@@ -93,7 +92,7 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE zcx_dtti_exception EXPORTING custom_message = |POPUP_TO_CONFIRM sy-subrc={ sy-subrc }|.
     ENDIF.
-    confirmed = xsdbool( answer = '1').
+    confirmed = xsdbool( answer = '1' ).
   ENDMETHOD.
 
 

@@ -239,6 +239,6 @@ CLASS zcl_dtti_source_factory IMPLEMENTATION.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE zcx_dtti_exception EXPORTING custom_message = |POPUP_TO_CONFIRM sy-subrc={ sy-subrc }|.
     ENDIF.
-    confirmed = xsdbool( answer = '1').
+    confirmed = xsdbool( answer = '1' ).
   ENDMETHOD.
 ENDCLASS.
