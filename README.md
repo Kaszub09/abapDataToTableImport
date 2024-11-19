@@ -44,6 +44,7 @@ alv->set_data( target->get_target_table( ) ).
 alv->display_data( ).
 ```
 It will ask user for file, parse it, and allow user to map columns from file to the ones needed by program.
+![obraz](https://github.com/user-attachments/assets/339c9267-4a47-4f21-a1c0-ecff5e543d24)
 
 https://github.com/user-attachments/assets/ea282c18-54ae-404e-93ae-7c7c1ffdbeac
 
@@ -54,4 +55,7 @@ https://github.com/user-attachments/assets/ea282c18-54ae-404e-93ae-7c7c1ffdbeac
 - Supports Drag&Drop
 - Support for editing source data in place
 ![obraz](https://github.com/user-attachments/assets/5d4dfe93-5dbc-4da4-9436-2bd9cbd2194a)
+- Information if columns can't be mapped
+![obraz](https://github.com/user-attachments/assets/4a8ace6f-3a8a-4f21-ac18-fc57df5f6f9e)
+- Multiple common formats for date, time and numbers. In case of text files
 
