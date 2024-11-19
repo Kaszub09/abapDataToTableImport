@@ -454,10 +454,6 @@
       "exclude": [],
       "severity": "Error"
     },
-    "superclass_final": {
-      "exclude": [],
-      "severity": "Error"
-    },
     "sy_modification": {
       "exclude": [],
       "severity": "Error"
@@ -474,10 +470,6 @@
       "exclude": [],
       "severity": "Error",
       "pattern": "^T[T]{0,1}_.+$"
-    },
-    "unknown_types": {
-      "exclude": [],
-      "severity": "Error"
     },
     "unnecessary_return": {
       "exclude": [],
