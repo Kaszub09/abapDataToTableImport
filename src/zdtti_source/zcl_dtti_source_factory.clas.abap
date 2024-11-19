@@ -23,7 +23,7 @@ CLASS zcl_dtti_source_factory DEFINITION PUBLIC FINAL CREATE PRIVATE.
       get_wks_name IMPORTING excel TYPE REF TO cl_fdt_xl_spreadsheet  RETURNING VALUE(wks) TYPE string,
       get_col_letters_from_int IMPORTING index TYPE i RETURNING VALUE(letters) TYPE string,
       ask_user IMPORTING title TYPE csequence DEFAULT space question TYPE csequence
-               RETURNING VALUE(confirmed) TYPE abap_bool RAISING zcx_exception.
+               RETURNING VALUE(confirmed) TYPE abap_bool.
 ENDCLASS.
 
 CLASS zcl_dtti_source_factory IMPLEMENTATION.
@@ -239,6 +239,6 @@ CLASS zcl_dtti_source_factory IMPLEMENTATION.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE zcx_dtti_exception EXPORTING custom_message = |POPUP_TO_CONFIRM sy-subrc={ sy-subrc }|.
     ENDIF.
-    confirmed = COND #( WHEN answer = '1' THEN abap_true ELSE abap_false ).
+    confirmed = xsdbool( answer = '1').
   ENDMETHOD.
 ENDCLASS.

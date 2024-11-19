@@ -29,7 +29,7 @@ CLASS lcl_new_column IMPLEMENTATION.
     super->constructor( layout_key = layout_key report_id = report_id ).
 
     functions->add_function( function = c_command-confirm description = VALUE #( icon_id = icon_okay text = TEXT-010 icon_text = TEXT-010 ) ).
-    functions->add_function( function = c_command-delete description = VALUE #( icon_id = icon_cancel text = TEXT-011 icon_text = TEXT-011 ) ).
+    functions->add_function( function = c_command-delete description = VALUE #( icon_id = icon_delete text = TEXT-011 icon_text = TEXT-011 ) ).
     functions->add_function( function = c_command-cancel description = VALUE #( icon_id = icon_cancel text = TEXT-012 icon_text = TEXT-012 ) ).
 
     alv_table->get_selections( )->set_selection_mode( if_salv_c_selection_mode=>single ).
