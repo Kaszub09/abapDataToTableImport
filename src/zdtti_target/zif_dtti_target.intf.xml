@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_INTF" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <VSEOINTERF>
+    <CLSNAME>ZIF_DTTI_TARGET</CLSNAME>
+    <LANGU>E</LANGU>
+    <DESCRIPT>Target info - use ZCL_DTTI_TARGET_FACTORY to create</DESCRIPT>
+    <EXPOSURE>2</EXPOSURE>
+    <STATE>1</STATE>
+    <UNICODE>X</UNICODE>
+   </VSEOINTERF>
+   <DESCRIPTIONS>
+    <SEOCOMPOTX>
+     <CMPNAME>REFRESH_TABLE_STRUCTURE</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Call if changes to table info affect table structure. Recrea</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_FIELD_DESCRIPTION</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>By defualt description is taken from DDIC if possible, or sa</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_FIELD_INFO</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Call REFRESH_TABLE_STRUCTURE if changes affect table structu</DESCRIPT>
+    </SEOCOMPOTX>
+    <SEOCOMPOTX>
+     <CMPNAME>SET_TARGET_TABLE_INFO</CMPNAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Call REFRESH_TABLE_STRUCTURE if changes affect table structu</DESCRIPT>
+    </SEOCOMPOTX>
+   </DESCRIPTIONS>
+  </asx:values>
+ </asx:abap>
+</abapGit>
