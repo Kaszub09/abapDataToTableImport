@@ -48,3 +48,10 @@ It will ask user for file, parse it, and allow user to map columns from file to 
 https://github.com/user-attachments/assets/ea282c18-54ae-404e-93ae-7c7c1ffdbeac
 
 
+### Features
+- Import data from clipboard, Excel file or text file (or supplied internal table)
+- Allow user to map columns between source and target structure
+- Supports Drag&Drop
+- Support for editing source data in place
+![obraz](https://github.com/user-attachments/assets/5d4dfe93-5dbc-4da4-9436-2bd9cbd2194a)
+
