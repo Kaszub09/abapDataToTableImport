@@ -62,6 +62,11 @@ CLASS zcl_dtti_mapper IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD try_to_map.
+    "Consider space as initial value for any type
+    IF source_field = space.
+      RETURN.
+    ENDIF.
+
     TRY.
         CASE type_kind.
           WHEN cl_abap_datadescr=>typekind_date.

@@ -17,7 +17,7 @@
      <ID>I</ID>
      <KEY>001</KEY>
      <ENTRY>Value &quot;&amp;1&quot; is not valid time</ENTRY>
-     <LENGTH>28</LENGTH>
+     <LENGTH>60</LENGTH>
     </item>
     <item>
      <ID>I</ID>
@@ -51,14 +51,14 @@
       <item>
        <ID>I</ID>
        <KEY>001</KEY>
-       <ENTRY>Wartość &quot;&amp;1&quot; nie jest poprawną datą.</ENTRY>
-       <LENGTH>36</LENGTH>
+       <ENTRY>Wartość &quot;&amp;1&quot; nie jest poprawnym czasem.</ENTRY>
+       <LENGTH>60</LENGTH>
       </item>
       <item>
        <ID>I</ID>
        <KEY>002</KEY>
-       <ENTRY>Wartość &quot;&amp;1&quot; nie jest poprawnym czasem.</ENTRY>
-       <LENGTH>39</LENGTH>
+       <ENTRY>Wartość &quot;&amp;1&quot; nie jest poprawną datą.</ENTRY>
+       <LENGTH>36</LENGTH>
       </item>
       <item>
        <ID>I</ID>
