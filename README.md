@@ -57,5 +57,5 @@ https://github.com/user-attachments/assets/ea282c18-54ae-404e-93ae-7c7c1ffdbeac
 ![obraz](https://github.com/user-attachments/assets/5d4dfe93-5dbc-4da4-9436-2bd9cbd2194a)
 - Information if columns can't be mapped
 ![obraz](https://github.com/user-attachments/assets/4a8ace6f-3a8a-4f21-ac18-fc57df5f6f9e)
-- Support for multiple common formats for date, time and numbers. In case of text files, most propable separator is detected. Currently doesn't support escaped characters inside quotes.
+- Support for multiple common formats for date, time and numbers. In case of text files, most probable separator is detected. Currently doesn't support escaped characters inside quotes.
 
