@@ -101,24 +101,11 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    DATA(fields_to_select) = CORRESPONDING tt_select_field( source->source_field_info ).
     IF mapping_info->source_col IS INITIAL.
-      "^Get source col from user
-      LOOP AT alv-mapping->mapping_ext REFERENCE INTO DATA(map) WHERE source_field IS NOT INITIAL.
-        IF map->field = mapping_info->target_col.
-          CONTINUE.
-        ENDIF.
-        DELETE fields_to_select USING KEY field WHERE field = map->source_field.
-      ENDLOOP.
-
+      DATA(fields_to_select) = CORRESPONDING tt_select_field( source->source_field_info ).
       DATA(popup) = NEW lcl_new_column( ).
       mapping_info->source_col = popup->get_column( data_table = REF #( fields_to_select ) old_column = alv-mapping->mapping_ext[ KEY field field = mapping_info->target_col ]-source_field ).
     ENDIF.
-
-    "Remove old mappings in case column is assigned second time.
-    LOOP AT alv-mapping->mapping_ext REFERENCE INTO map WHERE source_field = mapping_info->source_col OR field = mapping_info->target_col.
-      CLEAR map->source_field.
-    ENDLOOP.
     alv-mapping->mapping_ext[ field = mapping_info->target_col ]-source_field = mapping_info->source_col.
 
     alv-mapping->refresh_mapping_metainfo( source->source_field_info ).
