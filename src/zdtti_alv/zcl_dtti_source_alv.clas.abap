@@ -193,6 +193,7 @@ CLASS zcl_dtti_source_alv IMPLEMENTATION.
       fc[ fieldname = source_field_info->field ]-edit = is_in_edit_mode.
     ENDLOOP.
     alv_grid->set_frontend_fieldcatalog( fc ).
+    alv_grid->set_ready_for_input( COND #( WHEN is_in_edit_mode = abap_true THEN 1 ELSE 0 ) ).
   ENDMETHOD.
 
 ENDCLASS.
