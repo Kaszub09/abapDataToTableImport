@@ -63,9 +63,12 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
 
     columns->set_optimize( ).
 
+    me->grid_layout-sel_mode = 'A'.
+    me->grid_layout-no_rowmark = abap_true.
     set_header( header = TEXT-001 header_size = 'X' ).
     display_data( ).
     alv_grid->set_filter_criteria( VALUE #( ( fieldname = 'IS_HIDDEN' sign = 'E' option = 'EQ' low = 'X' ) ) ).
+
   ENDMETHOD.
 
   METHOD on_button_click.

@@ -63,6 +63,8 @@ CLASS zcl_dtti_source_alv IMPLEMENTATION.
     set_data( source_tab_ext ).
     prepare_columns( ).
     set_header( header = TEXT-001 header_size = 'X' ).
+    me->grid_layout-sel_mode = 'A'.
+    me->grid_layout-no_rowmark = abap_true.
     display_data( ).
 
     is_in_edit_mode = abap_true.
