@@ -59,16 +59,17 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
       map->cell_style = VALUE #( ( fieldname = 'SOURCE_FIELD_BUTTON' style = cl_gui_alv_grid=>mc_style_button ) ).
       map->is_alpha = xsdbool( map->type IS INSTANCE OF cl_abap_elemdescr AND CAST cl_abap_elemdescr( map->type )->edit_mask = '==ALPHA' ).
     ENDLOOP.
-    refresh_mapping_metainfo( VALUE #( ) ).
 
+    refresh_mapping_metainfo( VALUE #( ) ).
     columns->set_optimize( ).
 
     me->grid_layout-sel_mode = 'A'.
     me->grid_layout-no_rowmark = abap_true.
     set_header( header = TEXT-001 header_size = 'X' ).
-    display_data( ).
-    alv_grid->set_filter_criteria( VALUE #( ( fieldname = 'IS_HIDDEN' sign = 'E' option = 'EQ' low = 'X' ) ) ).
 
+    display_data( ).
+
+    alv_grid->set_filter_criteria( VALUE #( ( fieldname = 'IS_HIDDEN' sign = 'E' option = 'EQ' low = 'X' ) ) ).
   ENDMETHOD.
 
   METHOD on_button_click.
@@ -84,7 +85,6 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
       map->source_field_button = COND #( WHEN map->source_field IS INITIAL THEN '@BZ@'
                                   ELSE VALUE #( source_field_info[ KEY field field = map->source_field ]-description OPTIONAL ) ).
     ENDLOOP.
-    columns->set_optimize( ).
   ENDMETHOD.
 
   METHOD prepare_columns.
