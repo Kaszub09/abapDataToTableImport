@@ -87,6 +87,13 @@ CLASS zcl_dtti_source_alv IMPLEMENTATION.
     ref_to_tab_fs source_tab_ext <source_ext>.
     ref_to_tab_fs source_tab <source>.
     <source_ext> = CORRESPONDING #( <source> ).
+
+    "Remove empty rows
+    DATA(where_initial) = REDUCE #( INIT where = || FOR component IN source_components NEXT where = |{ where }AND { component-name } IS INITIAL | ).
+    IF strlen( where_initial ) > 0.
+      where_initial = substring( val = where_initial off = 3 ).
+      DELETE <source_ext> WHERE (where_initial).
+    ENDIF.
   ENDMETHOD.
 
   METHOD prepare_columns.
