@@ -99,11 +99,9 @@ CLASS zcl_dtti_source_factory IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_data_table_from_excel.
-    "Upload and parse excel file
     DATA it_bin_data TYPE w3mimetabtype.
 
-    " TODO: variable is assigned but never used (ABAP cleaner)
-    cl_gui_frontend_services=>gui_upload( EXPORTING filename = file_path filetype = 'BIN' IMPORTING filelength =  DATA(filelength) CHANGING data_tab = it_bin_data ).
+    cl_gui_frontend_services=>gui_upload( EXPORTING filename = file_path filetype = 'BIN' CHANGING data_tab = it_bin_data ).
     DATA(file_as_xstring) = cl_bcs_convert=>solix_to_xstring( it_bin_data ).
     DATA(excel) = NEW cl_fdt_xl_spreadsheet( document_name = file_path xdocument = file_as_xstring ).
 
@@ -167,7 +165,7 @@ CLASS zcl_dtti_source_factory IMPLEMENTATION.
     "--------------------------------------------------
     DATA(components) = VALUE cl_abap_structdescr=>component_table( ).
     DATA(index) = 1.
-    WHILE index <= split_count + 1.
+    WHILE index <= split_count.
       APPEND VALUE #( name  = get_col_letters_from_int( index ) type = CAST #( cl_abap_typedescr=>describe_by_name( 'STRING' ) ) ) TO components.
       index = index + 1.
     ENDWHILE.

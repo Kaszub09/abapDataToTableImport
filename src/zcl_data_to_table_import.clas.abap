@@ -47,7 +47,8 @@ CLASS zcl_data_to_table_import DEFINITION PUBLIC FINAL CREATE PUBLIC.
                RETURNING VALUE(confirmed) TYPE abap_bool,
       command_show_docu,
       command_confirm,
-      command_cancel.
+      command_cancel,
+      try_to_match_fields.
 
     DATA:
       BEGIN OF alv,
@@ -63,11 +64,7 @@ CLASS zcl_data_to_table_import DEFINITION PUBLIC FINAL CREATE PUBLIC.
       user_confirmed TYPE abap_bool.
 ENDCLASS.
 
-
-
 CLASS zcl_data_to_table_import IMPLEMENTATION.
-
-
   METHOD ask_user.
     DATA answer TYPE c LENGTH 1.
 
@@ -95,7 +92,6 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     confirmed = xsdbool( answer = '1' ).
   ENDMETHOD.
 
-
   METHOD change_mapping.
     IF mapping_info->target_col IS INITIAL.
       RETURN.
@@ -112,13 +108,11 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     refresh_mapping( ).
   ENDMETHOD.
 
-
   METHOD close_alvs.
     alv-mapping->container->free( ).
     alv-source->container->free( ).
     alv-target->container->free( ).
   ENDMETHOD.
-
 
   METHOD initialize_alvs.
     alv-mapping = NEW #( layout_key = VALUE #( report = sy-cprog handle = 'SOUR' ) mapping = target->get_target_table_info( )
@@ -136,10 +130,7 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     alv-mapping->drag_drop->add( flavor = 'DTTI' dragsrc = abap_true droptarget = abap_true ).
     alv-source->drag_drop->add( flavor = 'DTTI' dragsrc = abap_true droptarget = abap_true ).
     alv-target->drag_drop->add( flavor = 'DTTI' dragsrc = abap_true droptarget = abap_true ).
-
-    refresh_mapping( ).
   ENDMETHOD.
-
 
   METHOD refresh_mapping.
     alv-source->update_row_info( zcl_dtti_mapper=>map( mapping = alv-mapping->mapping_ext
@@ -150,7 +141,6 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     alv-target->refresh( ).
   ENDMETHOD.
 
-
   METHOD run_mapping.
     me->user_confirmed = abap_false.
     me->config = config.
@@ -158,6 +148,8 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     me->source = source.
 
     initialize_alvs( ).
+    try_to_match_fields( ).
+
     CALL FUNCTION 'ZDTTI_SET_HANDLER' EXPORTING new_screen_handler = me.
 
     CALL FUNCTION 'ZDTTI_CALL_SCREEN'  EXPORTING  screen_nr = '0001'.
@@ -167,7 +159,6 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
 
     user_confirmed = me->user_confirmed.
   ENDMETHOD.
-
 
   METHOD command_show_docu.
     IF config-documentation-dokname IS INITIAL.
@@ -190,7 +181,6 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     ENDIF.
   ENDMETHOD.
 
-
   METHOD zif_dtti_screen_handler~pai.
     CASE command.
       WHEN 'CANCEL'. command_cancel( ).
@@ -198,7 +188,6 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
       WHEN 'DOCU'. command_show_docu( ).
     ENDCASE.
   ENDMETHOD.
-
 
   METHOD zif_dtti_screen_handler~pbo.
     IF config-documentation-dokname IS INITIAL.
@@ -208,6 +197,7 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     ENDIF.
     SET TITLEBAR 'MAIN' OF PROGRAM c_fg_name WITH config-title.
   ENDMETHOD.
+
   METHOD on_source_data_changed.
     refresh_mapping( ).
   ENDMETHOD.
@@ -223,6 +213,7 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD command_confirm.
+    " TODO: variable is assigned but never used (ABAP cleaner)
     LOOP AT alv-mapping->mapping_ext REFERENCE INTO DATA(map) WHERE is_required = abap_true AND source_field IS INITIAL.
       MESSAGE TEXT-009 TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
@@ -236,4 +227,20 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     LEAVE TO SCREEN 0.
   ENDMETHOD.
 
+  METHOD try_to_match_fields.
+    LOOP AT source->source_field_info REFERENCE INTO DATA(source_field).
+      DATA(source_name) = to_upper( condense( source_field->field ) ).
+      DATA(source_description) = to_upper( condense( source_field->description ) ).
+      LOOP AT alv-mapping->mapping_ext REFERENCE INTO DATA(mapping_field).
+        IF source_name = to_upper( mapping_field->field ) OR ( strlen( source_description ) > 0
+            AND ( to_upper( mapping_field->field ) = source_description
+                  OR to_upper( mapping_field->field_description ) = source_description ) ).
+          mapping_field->source_field = source_field->field.
+        ENDIF.
+      ENDLOOP.
+    ENDLOOP.
+
+    alv-mapping->refresh_mapping_metainfo( source->source_field_info ).
+    refresh_mapping( ).
+  ENDMETHOD.
 ENDCLASS.
