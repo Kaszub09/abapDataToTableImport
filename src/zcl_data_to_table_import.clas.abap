@@ -9,12 +9,14 @@ CLASS zcl_data_to_table_import DEFINITION PUBLIC FINAL CREATE PUBLIC.
     TYPES:
       BEGIN OF t_config,
         "! <p class="shorttext synchronized">Title displayed on titlebar</p>
-        title TYPE string,
+        title              TYPE string,
         "! <p class="shorttext synchronized">Info about documentation created in SE61/SO72. If not supplied, documentation button is not displayed.</p>
         BEGIN OF documentation,
           dokclass TYPE doku_class,
           dokname  TYPE string,
         END OF documentation,
+        "! <p class="shorttext synchronized">Hide unmapped cols in target table</p>
+        hide_unmapped_cols TYPE abap_bool,
       END OF t_config.
 
     METHODS:
@@ -40,6 +42,7 @@ CLASS zcl_data_to_table_import DEFINITION PUBLIC FINAL CREATE PUBLIC.
     METHODS:
       change_mapping FOR EVENT change_mapping OF zif_dtti_change_mapping_event IMPORTING mapping_info,
       on_source_data_changed FOR EVENT source_data_changed OF zcl_dtti_source_alv,
+      on_unmapped_cols_vis_changed FOR EVENT unmapped_cols_vis_changed OF zcl_dtti_target_alv,
       refresh_mapping,
       initialize_alvs,
       close_alvs,
@@ -126,6 +129,7 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     SET HANDLER change_mapping FOR alv-source.
     SET HANDLER change_mapping FOR alv-target.
     SET HANDLER on_source_data_changed FOR alv-source.
+    SET HANDLER on_unmapped_cols_vis_changed FOR alv-target.
 
     alv-mapping->drag_drop->add( flavor = 'DTTI' dragsrc = abap_true droptarget = abap_true ).
     alv-source->drag_drop->add( flavor = 'DTTI' dragsrc = abap_true droptarget = abap_true ).
@@ -135,6 +139,7 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
   METHOD refresh_mapping.
     alv-source->update_row_info( zcl_dtti_mapper=>map( mapping = alv-mapping->mapping_ext
         source_tab = alv-source->source_tab_ext target_tab = target->get_target_table( ) ) ).
+    alv-target->update_col_visibility( alv-mapping->mapping_ext ).
 
     alv-mapping->refresh( ).
     alv-source->refresh( ).
@@ -148,6 +153,7 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     me->source = source.
 
     initialize_alvs( ).
+    alv-target->unmapped_cols_visible = xsdbool( config-hide_unmapped_cols = abap_false ).
     try_to_match_fields( ).
 
     CALL FUNCTION 'ZDTTI_SET_HANDLER' EXPORTING new_screen_handler = me.
@@ -213,7 +219,6 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD command_confirm.
-    " TODO: variable is assigned but never used (ABAP cleaner)
     LOOP AT alv-mapping->mapping_ext REFERENCE INTO DATA(map) WHERE is_required = abap_true AND source_field IS INITIAL.
       MESSAGE TEXT-009 TYPE 'S' DISPLAY LIKE 'E'.
       RETURN.
@@ -243,4 +248,10 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     alv-mapping->refresh_mapping_metainfo( source->source_field_info ).
     refresh_mapping( ).
   ENDMETHOD.
+
+  METHOD on_unmapped_cols_vis_changed.
+    alv-target->update_col_visibility( alv-mapping->mapping_ext ).
+    alv-target->refresh( ).
+  ENDMETHOD.
+
 ENDCLASS.

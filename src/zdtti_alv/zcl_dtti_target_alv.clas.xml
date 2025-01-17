@@ -20,6 +20,12 @@
     </item>
     <item>
      <ID>I</ID>
+     <KEY>002</KEY>
+     <ENTRY>Display/Hide unmapped columns</ENTRY>
+     <LENGTH>58</LENGTH>
+    </item>
+    <item>
+     <ID>I</ID>
      <KEY>C01</KEY>
      <ENTRY>Comment</ENTRY>
      <LENGTH>7</LENGTH>
@@ -33,7 +39,13 @@
        <ID>I</ID>
        <KEY>001</KEY>
        <ENTRY>Tabela docelowa - podejrzyj wyniik mapowanie. Drag&amp;Drop.</ENTRY>
-       <LENGTH>56</LENGTH>
+       <LENGTH>59</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>002</KEY>
+       <ENTRY>Pokaż/Schowaj niezmapowane kolumny</ENTRY>
+       <LENGTH>58</LENGTH>
       </item>
       <item>
        <ID>I</ID>
