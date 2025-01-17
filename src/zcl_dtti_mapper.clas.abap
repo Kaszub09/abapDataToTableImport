@@ -12,7 +12,7 @@ CLASS zcl_dtti_mapper DEFINITION PUBLIC FINAL CREATE PUBLIC.
     CLASS-METHODS:
         map IMPORTING mapping TYPE zcl_dtti_mapping_alv=>tt_mapping source_tab TYPE REF TO data target_tab TYPE REF TO data
             RETURNING VALUE(mapping_result) TYPE tt_mapping_result,
-        try_to_map IMPORTING type_kind TYPE abap_typecategory source_field TYPE any
+        try_to_map IMPORTING type_kind TYPE abap_typecategory source_field TYPE any conversion_exit_input TYPE funcnam
                    CHANGING target_field TYPE any
                    RETURNING VALUE(error) TYPE string.
 ENDCLASS.
@@ -38,12 +38,9 @@ CLASS zcl_dtti_mapper IMPLEMENTATION.
         ASSIGN COMPONENT map->source_field OF STRUCTURE <source_row> TO FIELD-SYMBOL(<source_field>).
         ASSIGN COMPONENT map->field OF STRUCTURE <target_row> TO FIELD-SYMBOL(<target_field>).
 
-        DATA(error) = try_to_map( EXPORTING type_kind = map->type->type_kind source_field = <source_field> CHANGING target_field = <target_field> ).
-
+        DATA(error) = try_to_map( EXPORTING type_kind = map->type->type_kind source_field = <source_field> conversion_exit_input = map->conversion_exit_input
+                                  CHANGING target_field = <target_field> ).
         IF strlen( error ) = 0.
-          IF map->is_alpha = abap_true.
-            <target_field> = |{ <target_field> ALPHA = IN }|.
-          ENDIF.
           APPEND map->source_field TO map_result-ok_fields.
 
         ELSE.
@@ -68,6 +65,14 @@ CLASS zcl_dtti_mapper IMPLEMENTATION.
     ENDIF.
 
     TRY.
+        IF conversion_exit_input IS NOT INITIAL.
+          CALL FUNCTION conversion_exit_input EXPORTING input = source_field IMPORTING output = target_field EXCEPTIONS OTHERS = 1.
+          IF sy-subrc <> 0.
+            RAISE EXCEPTION TYPE zcx_dtti_exception EXPORTING custom_message = replace( val = TEXT-006 sub = '&1' with = conversion_exit_input occ = 0 ).
+          ENDIF.
+          RETURN.
+        ENDIF.
+
         CASE type_kind.
           WHEN cl_abap_datadescr=>typekind_date.
             DATA(clean_date) = condense( source_field ).

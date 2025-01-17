@@ -4,10 +4,11 @@ CLASS ltcl_map_fields DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION 
   PRIVATE SECTION.
     TYPES:
       BEGIN OF t_testdata,
-        type_kind  TYPE abap_typecategory,
-        source     TYPE string,
-        expected   TYPE string,
-        any_errors TYPE abap_bool,
+        type_kind             TYPE abap_typecategory,
+        source                TYPE string,
+        conversion_exit_input TYPE funcnam,
+        expected              TYPE string,
+        any_errors            TYPE abap_bool,
       END OF t_testdata,
       tt_testdata TYPE STANDARD TABLE OF t_testdata WITH EMPTY KEY.
 
@@ -16,6 +17,7 @@ CLASS ltcl_map_fields DEFINITION FINAL FOR TESTING RISK LEVEL HARMLESS DURATION 
       map_times FOR TESTING,
       map_numbers FOR TESTING,
       map_string FOR TESTING,
+      map_languages FOR TESTING,
       check_test_data IMPORTING test_data TYPE tt_testdata CHANGING target_field TYPE any.
 ENDCLASS.
 
@@ -80,7 +82,7 @@ CLASS ltcl_map_fields IMPLEMENTATION.
       CLEAR target_field.
       DATA(msg) = |T={ test->type_kind };S={ test->source };E={ test->expected };ERR={ test->any_errors }|.
 
-      DATA(error) = zcl_dtti_mapper=>try_to_map( EXPORTING type_kind = test->type_kind source_field = test->source
+      DATA(error) = zcl_dtti_mapper=>try_to_map( EXPORTING type_kind = test->type_kind source_field = test->source conversion_exit_input = test->conversion_exit_input
           CHANGING target_field = target_field ).
 
       IF test->any_errors = abap_true.
@@ -92,4 +94,15 @@ CLASS ltcl_map_fields IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
   ENDMETHOD.
+  METHOD map_languages.
+    DATA target_field TYPE spras.
+
+    check_test_data( EXPORTING test_data = VALUE #( type_kind = cl_abap_datadescr=>typekind_char
+      ( source = 'EN' expected = 'E' any_errors = abap_false conversion_exit_input = 'CONVERSION_EXIT_ISOLA_INPUT' )
+      ( source = 'PL' expected = 'L' any_errors = abap_false conversion_exit_input = 'CONVERSION_EXIT_ISOLA_INPUT' )
+      ( source = 'ZZ' any_errors = abap_true conversion_exit_input = 'CONVERSION_EXIT_ISOLA_INPUT' )
+      ( source = space expected = space any_errors = abap_false conversion_exit_input = 'CONVERSION_EXIT_ISOLA_INPUT' ) )
+                     CHANGING target_field = target_field ).
+  ENDMETHOD.
+
 ENDCLASS.

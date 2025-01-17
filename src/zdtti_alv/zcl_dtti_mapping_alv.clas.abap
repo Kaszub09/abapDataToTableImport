@@ -8,12 +8,12 @@ CLASS zcl_dtti_mapping_alv DEFINITION PUBLIC INHERITING FROM zcl_ea_alv_table CR
       BEGIN OF t_mapping.
         INCLUDE TYPE zif_dtti_target=>t_target.
       TYPES:
-        is_alpha            TYPE abap_bool,
-        key_info            TYPE string,
-        required_info       TYPE string,
-        source_field_button TYPE string,
-        color               TYPE lvc_t_scol,
-        cell_style          TYPE columns->tt_cell_style_col,
+        conversion_exit_input TYPE funcnam,
+        key_info              TYPE string,
+        required_info         TYPE string,
+        source_field_button   TYPE string,
+        color                 TYPE lvc_t_scol,
+        cell_style            TYPE columns->tt_cell_style_col,
       END OF t_mapping,
       tt_mapping TYPE STANDARD TABLE OF t_mapping WITH EMPTY KEY
       WITH UNIQUE SORTED KEY field COMPONENTS field.
@@ -57,7 +57,12 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
       map->key_info = COND #( WHEN map->is_key = abap_true THEN '@3V@' ELSE '' ).
       map->required_info = COND #( WHEN map->is_required = abap_true THEN '@8R@' ELSE '' ).
       map->cell_style = VALUE #( ( fieldname = 'SOURCE_FIELD_BUTTON' style = cl_gui_alv_grid=>mc_style_button ) ).
-      map->is_alpha = xsdbool( map->type IS INSTANCE OF cl_abap_elemdescr AND CAST cl_abap_elemdescr( map->type )->edit_mask = '==ALPHA' ).
+      IF map->type IS INSTANCE OF cl_abap_elemdescr.
+        DATA(edit_mask) = CAST cl_abap_elemdescr( map->type )->edit_mask.
+        IF edit_mask IS NOT INITIAL.
+          map->conversion_exit_input = |CONVERSION_EXIT_{ edit_mask+2(5) }_INPUT|.
+        ENDIF.
+      ENDIF.
     ENDLOOP.
 
     refresh_mapping_metainfo( VALUE #( ) ).
@@ -92,7 +97,7 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
     columns->set_as_hidden( 'IS_KEY' ).
     columns->set_as_hidden( 'IS_REQUIRED' ).
     columns->set_as_hidden( 'IS_HIDDEN' ).
-    columns->set_as_hidden( 'IS_ALPHA' ).
+    columns->set_as_hidden( 'CONVERSION_EXIT_INPUT' ).
 
     columns->move_column( column_to_move = 'FIELD_DESCRIPTION' before = 'IS_KEY' ).
     columns->move_column( column_to_move = 'SOURCE_FIELD' before = 'SOURCE_FIELD_BUTTON' ).

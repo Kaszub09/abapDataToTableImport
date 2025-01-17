@@ -12,8 +12,12 @@ ENDCLASS.
 
 CLASS ltcl_dtti_source_table IMPLEMENTATION.
   METHOD return_supplied_data.
-    DATA test_table TYPE STANDARD TABLE OF i WITH EMPTY KEY.
-    test_table = VALUE #( ( 2 ) ( 1 ) ).
+    TYPES:
+      BEGIN OF t_test_table,
+        i TYPE i,
+      END OF t_test_table,
+      tt_test_table TYPE STANDARD TABLE OF t_test_table WITH EMPTY KEY.
+    DATA(test_table) = VALUE tt_test_table( ( i = 2 ) ( i = 1 ) ).
 
     cut = NEW #( REF #( test_table ) ).
 

@@ -43,6 +43,12 @@
      <ENTRY>Finished mapping</ENTRY>
      <LENGTH>16</LENGTH>
     </item>
+    <item>
+     <ID>I</ID>
+     <KEY>006</KEY>
+     <ENTRY>Error in conversion function &apos;&amp;1&apos;</ENTRY>
+     <LENGTH>66</LENGTH>
+    </item>
    </TPOOL>
    <I18N_TPOOL>
     <item>
@@ -77,6 +83,12 @@
        <KEY>005</KEY>
        <ENTRY>Skończono mapowanie</ENTRY>
        <LENGTH>19</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>006</KEY>
+       <ENTRY>Błąd w funkcji konwersji &apos;&amp;1&apos;</ENTRY>
+       <LENGTH>66</LENGTH>
       </item>
      </TEXTPOOL>
     </item>
