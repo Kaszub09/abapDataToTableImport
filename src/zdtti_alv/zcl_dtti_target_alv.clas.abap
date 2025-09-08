@@ -34,10 +34,14 @@ CLASS zcl_dtti_target_alv IMPLEMENTATION.
 
     set_data( data_tab ).
 
+
     LOOP AT mapping REFERENCE INTO DATA(map).
       columns->set_fixed_text( column = map->field text = map->field_description ).
       IF map->is_hidden = abap_true.
         columns->set_as_hidden( map->field ).
+      ENDIF.
+      IF map->currency_field IS NOT INITIAL.
+        columns->fc[ KEY name fieldname = map->field ]-cfieldname = map->currency_field.
       ENDIF.
     ENDLOOP.
     me->grid_layout-sel_mode = 'A'.
@@ -48,7 +52,7 @@ CLASS zcl_dtti_target_alv IMPLEMENTATION.
 
     functions->add_function( VALUE #( function = c_functions-change_unmapped_visibility icon = '@D1@' text = TEXT-002 ) ).
 
-    display_data( ).
+    display_data( it_toolbar_excluding = VALUE #( ( cl_gui_alv_grid=>mc_fc_info ) ( cl_gui_alv_grid=>mc_fc_graph ) ) ).
   ENDMETHOD.
 
   METHOD on_drag.

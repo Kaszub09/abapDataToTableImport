@@ -2,9 +2,11 @@
 INTERFACE zif_dtti_source PUBLIC.
   TYPES:
     BEGIN OF t_source_field_info,
-      field       TYPE fieldname,
-      description TYPE string,
-      is_ddic     TYPE abap_bool,
+      field          TYPE fieldname,
+      description    TYPE string,
+      is_ddic        TYPE abap_bool,
+      "! Fill manually if needed
+      currency_field TYPE fieldname,
     END OF t_source_field_info,
     tt_source_field_info TYPE STANDARD TABLE OF t_source_field_info WITH EMPTY KEY
         WITH UNIQUE SORTED KEY field COMPONENTS field.

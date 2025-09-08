@@ -65,7 +65,7 @@ CLASS zcl_dtti_source_alv IMPLEMENTATION.
     set_header( header = TEXT-001 header_size = 'X' ).
     me->grid_layout-sel_mode = 'A'.
     me->grid_layout-no_rowmark = abap_true.
-    display_data( ).
+    display_data( it_toolbar_excluding = VALUE #( ( cl_gui_alv_grid=>mc_fc_info ) ( cl_gui_alv_grid=>mc_fc_graph ) ) ).
 
     is_in_edit_mode = abap_true.
     change_edit_mode( ).
@@ -100,6 +100,9 @@ CLASS zcl_dtti_source_alv IMPLEMENTATION.
     LOOP AT source->source_field_info REFERENCE INTO DATA(source_field_info).
       IF source_field_info->is_ddic = abap_false.
         columns->set_fixed_text( column = source_field_info->field text = source_field_info->description ).
+      ENDIF.
+      IF source_field_info->currency_field IS NOT INITIAL.
+        columns->fc[ KEY name fieldname = source_field_info->field ]-cfieldname = source_field_info->currency_field.
       ENDIF.
     ENDLOOP.
     columns->set_fixed_text( column = c_col-comment text = TEXT-c01 ).

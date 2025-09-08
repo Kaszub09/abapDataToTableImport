@@ -25,6 +25,16 @@ CLASS ltcl_dtti_target_base IMPLEMENTATION.
     cut->zif_dtti_target~set_field_info(
         VALUE #(  field = 'FIELD_3' type = CAST cl_abap_datadescr( cl_abap_datadescr=>describe_by_data( sy-datum ) ) ) ).
 
+    cut->zif_dtti_target~set_field_info(
+        VALUE #(  field = 'STRUCT1-FIELD1' type = CAST cl_abap_datadescr( cl_abap_datadescr=>describe_by_data( 1 ) ) ) ).
+
+    cut->zif_dtti_target~set_field_info(
+        VALUE #(  field = 'STRUCT1-SUBSTRUCT1-FIELD1' type = CAST cl_abap_datadescr( cl_abap_datadescr=>describe_by_data( 1 ) ) ) ).
+    cut->zif_dtti_target~set_field_info(
+        VALUE #(  field = 'STRUCT1-SUBSTRUCT1-FIELD2' type = CAST cl_abap_datadescr( cl_abap_datadescr=>describe_by_data( 1 ) ) ) ).
+
+
+
     "Get table with empty line
     DATA(tab_ref) = cut->zif_dtti_target~get_target_table( ).
     FIELD-SYMBOLS <table> TYPE table.
@@ -49,9 +59,24 @@ CLASS ltcl_dtti_target_base IMPLEMENTATION.
       cl_abap_unit_assert=>fail( msg = 'Component 3 FIELD_3 not created' ).
     ENDIF.
 
-    ASSIGN COMPONENT 4 OF STRUCTURE <line> TO FIELD-SYMBOL(<field_4>).
+    ASSIGN COMPONENT 'STRUCT1-FIELD1' OF STRUCTURE <line> TO FIELD-SYMBOL(<struct1_field1>).
+    IF sy-subrc <> 0.
+      cl_abap_unit_assert=>fail( msg = 'Component STRUCT1-FIELD1 not created' ).
+    ENDIF.
+
+    ASSIGN COMPONENT 'STRUCT1-SUBSTRUCT1-FIELD1' OF STRUCTURE <line> TO FIELD-SYMBOL(<struct1_substruct1_field1>).
+    IF sy-subrc <> 0.
+      cl_abap_unit_assert=>fail( msg = 'Component STRUCT1-SUBSTRUCT1-FIELD1 not created' ).
+    ENDIF.
+
+    ASSIGN COMPONENT 'STRUCT1-SUBSTRUCT1-FIELD2' OF STRUCTURE <line> TO FIELD-SYMBOL(<struct1_substruct1_field2>).
+    IF sy-subrc <> 0.
+      cl_abap_unit_assert=>fail( msg = 'Component STRUCT1-SUBSTRUCT1-FIELD2 not created' ).
+    ENDIF.
+
+    ASSIGN COMPONENT 5 OF STRUCTURE <line> TO FIELD-SYMBOL(<field_5>).
     IF sy-subrc = 0.
-      cl_abap_unit_assert=>fail( msg = 'Component 4 FIELD_4 should not be created' ).
+      cl_abap_unit_assert=>fail( msg = 'Component 5 FIELD_5 should not be created' ).
     ENDIF.
   ENDMETHOD.
 

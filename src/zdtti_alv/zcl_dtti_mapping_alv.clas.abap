@@ -72,7 +72,7 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
     me->grid_layout-no_rowmark = abap_true.
     set_header( header = TEXT-001 header_size = 'X' ).
 
-    display_data( ).
+    display_data( it_toolbar_excluding = VALUE #( ( cl_gui_alv_grid=>mc_fc_info ) ( cl_gui_alv_grid=>mc_fc_graph ) ) ).
 
     alv_grid->set_filter_criteria( VALUE #( ( fieldname = 'IS_HIDDEN' sign = 'E' option = 'EQ' low = 'X' ) ) ).
   ENDMETHOD.
@@ -98,6 +98,7 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
     columns->set_as_hidden( 'IS_REQUIRED' ).
     columns->set_as_hidden( 'IS_HIDDEN' ).
     columns->set_as_hidden( 'CONVERSION_EXIT_INPUT' ).
+    columns->set_as_hidden( 'CURRENCY_FIELD' ).
 
     columns->move_column( column_to_move = 'FIELD_DESCRIPTION' before = 'IS_KEY' ).
     columns->move_column( column_to_move = 'SOURCE_FIELD' before = 'SOURCE_FIELD_BUTTON' ).

@@ -17,6 +17,11 @@ CLASS zcl_data_to_table_import DEFINITION PUBLIC FINAL CREATE PUBLIC.
         END OF documentation,
         "! <p class="shorttext synchronized">Hide unmapped cols in target table</p>
         hide_unmapped_cols TYPE abap_bool,
+        "! Use BAPI_CURRENCY_CONV_TO_INTERNAL to convert amount from external to internal format.
+        "! E.g. 9 HUF should be converted to 0.09 in internatl field, 9 PLN to 9.00 PLN.
+        "! Use if data comes from external source.
+        "! Don't use if data comes from internal source, e.g. table wit currency fields, since SAP already formats it
+        convert_currrency_to_internal type abap_bool,
       END OF t_config.
 
     METHODS:
@@ -138,7 +143,8 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
 
   METHOD refresh_mapping.
     alv-source->update_row_info( zcl_dtti_mapper=>map( mapping = alv-mapping->mapping_ext
-        source_tab = alv-source->source_tab_ext target_tab = target->get_target_table( ) ) ).
+        source_tab = alv-source->source_tab_ext target_tab = target->get_target_table( )
+        convert_currrency_to_internal = config-convert_currrency_to_internal ) ).
     alv-target->update_col_visibility( alv-mapping->mapping_ext ).
 
     alv-mapping->refresh( ).

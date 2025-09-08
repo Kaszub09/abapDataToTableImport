@@ -11,10 +11,14 @@ CLASS zcl_dtti_mapper DEFINITION PUBLIC FINAL CREATE PUBLIC.
 
     CLASS-METHODS:
         map IMPORTING mapping TYPE zcl_dtti_mapping_alv=>tt_mapping source_tab TYPE REF TO data target_tab TYPE REF TO data
+                      convert_currrency_to_internal TYPE abap_bool
             RETURNING VALUE(mapping_result) TYPE tt_mapping_result,
         try_to_map IMPORTING type_kind TYPE abap_typecategory source_field TYPE any conversion_exit_input TYPE funcnam
                    CHANGING target_field TYPE any
-                   RETURNING VALUE(error) TYPE string.
+                   RETURNING VALUE(error) TYPE string,
+        try_converting_currency IMPORTING source_field TYPE any currency TYPE any
+                                CHANGING target_field TYPE any
+                                RETURNING VALUE(error) TYPE string.
 ENDCLASS.
 
 
@@ -29,7 +33,6 @@ CLASS zcl_dtti_mapper IMPLEMENTATION.
     CREATE DATA target_row LIKE LINE OF <target_table>.
     ASSIGN target_row->* TO FIELD-SYMBOL(<target_row>).
 
-
     LOOP AT <source_tab> ASSIGNING FIELD-SYMBOL(<source_row>).
       DATA(map_result) = VALUE t_mapping_result( ).
       CLEAR <target_row>.
@@ -40,6 +43,19 @@ CLASS zcl_dtti_mapper IMPLEMENTATION.
 
         DATA(error) = try_to_map( EXPORTING type_kind = map->type->type_kind source_field = <source_field> conversion_exit_input = map->conversion_exit_input
                                   CHANGING target_field = <target_field> ).
+
+        IF convert_currrency_to_internal = abap_true AND map->currency_field IS NOT INITIAL AND strlen( error ) = 0.
+          DATA(currency) = VALUE waers_curc( ).
+          DATA(currency_source_field) = VALUE #( mapping[ KEY field field = map->currency_field ]-source_field OPTIONAL ).
+          ASSIGN COMPONENT currency_source_field OF STRUCTURE <source_row> TO FIELD-SYMBOL(<currency>).
+          IF sy-subrc = 0.
+            currency = <currency>.
+          ENDIF.
+          "target now stores converted number, but possibly at wrong decimal places
+          try_converting_currency( EXPORTING source_field = <target_field> currency = currency CHANGING target_field = <target_field> ).
+        ENDIF.
+
+
         IF strlen( error ) = 0.
           APPEND map->source_field TO map_result-ok_fields.
 
@@ -145,6 +161,21 @@ CLASS zcl_dtti_mapper IMPLEMENTATION.
       CATCH cx_root INTO DATA(cx).
         error = cx->get_text( ).
     ENDTRY.
+  ENDMETHOD.
+
+  METHOD try_converting_currency.
+    DATA bapireturn  TYPE bapireturn.
+    DATA(amount_external) = CONV bapicurr_d( source_field ).
+    CALL FUNCTION 'BAPI_CURRENCY_CONV_TO_INTERNAL'
+      EXPORTING
+        currency             = currency
+        amount_external      = amount_external                 " External Currency Amount
+        max_number_of_digits = 23                 " Maximum Field Length of Internal Domains
+      IMPORTING
+        amount_internal      = target_field                 " Converted Internal Currency Amount
+        return               = bapireturn.                  " Return Messages
+
+    error = bapireturn-message.
   ENDMETHOD.
 
 ENDCLASS.

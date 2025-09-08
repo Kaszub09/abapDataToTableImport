@@ -35,8 +35,8 @@ CLASS zcl_dtti_source_table IMPLEMENTATION.
       "Try getting field description from DDIC, otherwise same as name
       LOOP AT source_components REFERENCE INTO comp.
         IF comp->type->is_ddic_type( ) AND comp->type IS INSTANCE OF cl_abap_elemdescr.
-          DATA(de_descr) = CAST cl_abap_elemdescr( comp->type ).
-          APPEND VALUE #( field = comp->name description = de_descr->get_ddic_field( )-scrtext_l is_ddic = abap_true ) TO zif_dtti_source~source_field_info.
+          DATA(ddic_field) = CAST cl_abap_elemdescr( comp->type )->get_ddic_field( ).
+          APPEND VALUE #( field = comp->name description = ddic_field-scrtext_l is_ddic = abap_true ) TO zif_dtti_source~source_field_info.
         ELSE.
           APPEND VALUE #( field = comp->name description = comp->name is_ddic = abap_false ) TO zif_dtti_source~source_field_info.
         ENDIF.

@@ -11,6 +11,8 @@ INTERFACE zif_dtti_target PUBLIC.
       is_required       TYPE abap_bool,
       is_hidden         TYPE abap_bool,
       source_field      TYPE fieldname,
+      "! Fill manually if needed
+      currency_field    TYPE fieldname,
     END OF t_target,
     tt_target TYPE STANDARD TABLE OF t_target WITH EMPTY KEY
     WITH UNIQUE SORTED KEY field COMPONENTS field.
@@ -27,5 +29,7 @@ INTERFACE zif_dtti_target PUBLIC.
     "! <p class="shorttext synchronized" lang="en">By defualt description is taken from DDIC if possible, or same as field name. </p>
     set_field_description IMPORTING field TYPE fieldname description TYPE csequence,
     "! <p class="shorttext synchronized" lang="en">Call if changes to table info affect table structure. Recreates target table and destroys current data.</p>
-    refresh_table_structure.
+    refresh_table_structure,
+    set_currency_field IMPORTING field TYPE fieldname currency_field TYPE fieldname,
+    remove_field IMPORTING field TYPE fieldname.
 ENDINTERFACE.

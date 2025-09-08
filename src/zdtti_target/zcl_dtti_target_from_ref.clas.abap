@@ -32,9 +32,17 @@ CLASS zcl_dtti_target_from_ref IMPLEMENTATION.
         APPEND LINES OF get_target_info( CAST #( comp->type ) ) TO info.
         CONTINUE.
       ENDIF.
+
       IF comp->type->is_ddic_type( ) AND comp->type IS INSTANCE OF cl_abap_elemdescr.
         DATA(de_descr) = CAST cl_abap_elemdescr( comp->type ).
         APPEND VALUE #( field = comp->name type = comp->type is_ddic = abap_true field_description = de_descr->get_ddic_field( )-scrtext_l ) TO info.
+
+      ELSEIF comp->type IS INSTANCE OF cl_abap_structdescr.
+        LOOP AT get_target_info( CAST #( comp->type ) ) REFERENCE INTO DATA(struct_target_info_row).
+          APPEND VALUE #( field = |{ comp->name }-{ struct_target_info_row->field }|
+              type = struct_target_info_row->type is_ddic = abap_false field_description = struct_target_info_row->field_description ) TO info.
+        ENDLOOP.
+
       ELSE.
         APPEND VALUE #( field = comp->name type = comp->type is_ddic = abap_false field_description = comp->name ) TO info.
       ENDIF.
