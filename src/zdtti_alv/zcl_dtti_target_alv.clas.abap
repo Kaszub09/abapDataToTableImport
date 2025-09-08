@@ -86,7 +86,7 @@ CLASS zcl_dtti_target_alv IMPLEMENTATION.
     me->alv_grid->get_frontend_fieldcatalog( IMPORTING et_fieldcatalog = DATA(fc) ).
     LOOP AT fc REFERENCE INTO DATA(field).
       LOOP AT mapping REFERENCE INTO DATA(map) USING KEY field WHERE field = field->fieldname AND is_hidden = abap_false.
-        field->no_out = COND #( WHEN unmapped_cols_visible = abap_false AND map->source_field IS INITIAL THEN abap_true ELSE abap_false ).
+        field->no_out = xsdbool( unmapped_cols_visible = abap_false AND map->source_field IS INITIAL ).
       ENDLOOP.
     ENDLOOP.
     me->alv_grid->set_frontend_fieldcatalog( fc ).
