@@ -97,6 +97,26 @@
      <DESCRIPT>Source is not bound if user cancelled</DESCRIPT>
     </SEOCOMPOTX>
    </DESCRIPTIONS>
+   <DESCRIPTIONS_SUB>
+    <SEOSUBCOTX>
+     <CMPNAME>CREATE_FROM_FILE</CMPNAME>
+     <SCONAME>FILE_PATH</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Used if supplied, otherwise ask user</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CREATE_FROM_FILE</CMPNAME>
+     <SCONAME>WORKSHEET</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Applicable only if file is XLSX and more than one worksheet</DESCRIPT>
+    </SEOSUBCOTX>
+    <SEOSUBCOTX>
+     <CMPNAME>CREATE_FROM_FILE</CMPNAME>
+     <SCONAME>WORKSHEET_NAME</SCONAME>
+     <LANGU>E</LANGU>
+     <DESCRIPT>Applicable only if workhseet=c_worksheet-use_name</DESCRIPT>
+    </SEOSUBCOTX>
+   </DESCRIPTIONS_SUB>
   </asx:values>
  </asx:abap>
 </abapGit>

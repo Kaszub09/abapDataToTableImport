@@ -32,7 +32,6 @@ CLASS zcl_dtti_target_factory IMPLEMENTATION.
         ENDIF.
       ENDLOOP.
       target->set_target_table_info( info_copy ).
-      target->refresh_table_structure( ).
     ENDIF.
   ENDMETHOD.
 ENDCLASS.

@@ -12,14 +12,9 @@
    </VSEOINTERF>
    <DESCRIPTIONS>
     <SEOCOMPOTX>
-     <CMPNAME>REFRESH_TABLE_STRUCTURE</CMPNAME>
-     <LANGU>E</LANGU>
-     <DESCRIPT>Call if changes to table info affect table structure. Recrea</DESCRIPT>
-    </SEOCOMPOTX>
-    <SEOCOMPOTX>
      <CMPNAME>SET_FIELD_DESCRIPTION</CMPNAME>
      <LANGU>E</LANGU>
-     <DESCRIPT>By defualt description is taken from DDIC if possible, or sa</DESCRIPT>
+     <DESCRIPT>By default description is taken from DDIC if possible, other</DESCRIPT>
     </SEOCOMPOTX>
     <SEOCOMPOTX>
      <CMPNAME>SET_FIELD_INFO</CMPNAME>

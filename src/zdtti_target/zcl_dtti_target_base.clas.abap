@@ -13,14 +13,14 @@ CLASS zcl_dtti_target_base DEFINITION PUBLIC CREATE PRIVATE
 
   PRIVATE SECTION.
     METHODS:
+      refresh_table_structure,
       get_struct_descr IMPORTING prefix TYPE fieldname RETURNING VALUE(struct_descr) TYPE REF TO cl_abap_structdescr.
-
 ENDCLASS.
 
 CLASS zcl_dtti_target_base IMPLEMENTATION.
   METHOD zif_dtti_target~get_target_table.
     IF me->target_table IS NOT BOUND OR refresh_needed = abap_true.
-      zif_dtti_target~refresh_table_structure( ).
+      refresh_table_structure( ).
     ENDIF.
     target_table = me->target_table.
   ENDMETHOD.
@@ -31,9 +31,10 @@ CLASS zcl_dtti_target_base IMPLEMENTATION.
 
   METHOD zif_dtti_target~set_target_table_info.
     table_info = info.
+    refresh_needed = abap_true.
   ENDMETHOD.
 
-  METHOD zif_dtti_target~refresh_table_structure.
+  METHOD refresh_table_structure.
     DATA(components) = VALUE cl_abap_structdescr=>component_table( ).
     LOOP AT table_info REFERENCE INTO DATA(field_info).
       IF NOT field_info->field CP '*-*'.
@@ -41,6 +42,7 @@ CLASS zcl_dtti_target_base IMPLEMENTATION.
         CONTINUE.
       ENDIF.
 
+      " TODO: variable is assigned but never used (ABAP cleaner)
       SPLIT field_info->field AT '-' INTO DATA(struct_name) DATA(dummy).
       IF line_exists( components[ name = struct_name ] ).
         CONTINUE.
@@ -55,6 +57,7 @@ CLASS zcl_dtti_target_base IMPLEMENTATION.
     CREATE DATA target_table TYPE HANDLE table_descr.
     refresh_needed = abap_false.
   ENDMETHOD.
+
   METHOD zif_dtti_target~set_field_info.
     IF line_exists( table_info[ KEY field field = field_info-field ] ).
       DELETE table_info WHERE field = field_info-field.
@@ -107,4 +110,11 @@ CLASS zcl_dtti_target_base IMPLEMENTATION.
     struct_descr = cl_abap_structdescr=>get( components ).
   ENDMETHOD.
 
+  METHOD zif_dtti_target~set_field_conv_exit_input.
+    table_info[ KEY field field = field ]-conversion_exit_input = conv_exit_input.
+  ENDMETHOD.
+
+  METHOD zif_dtti_target~set_field_source.
+    table_info[ KEY field field = field ]-source_field = source_field.
+  ENDMETHOD.
 ENDCLASS.

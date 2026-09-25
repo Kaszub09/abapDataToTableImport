@@ -9,19 +9,19 @@ CLASS zcl_data_to_table_import DEFINITION PUBLIC FINAL CREATE PUBLIC.
     TYPES:
       BEGIN OF t_config,
         "! <p class="shorttext synchronized">Title displayed on titlebar</p>
-        title              TYPE string,
+        title                         TYPE string,
         "! <p class="shorttext synchronized">Info about documentation created in SE61/SO72. If not supplied, documentation button is not displayed.</p>
         BEGIN OF documentation,
           dokclass TYPE doku_class,
           dokname  TYPE string,
         END OF documentation,
         "! <p class="shorttext synchronized">Hide unmapped cols in target table</p>
-        hide_unmapped_cols TYPE abap_bool,
+        hide_unmapped_cols            TYPE abap_bool,
         "! Use BAPI_CURRENCY_CONV_TO_INTERNAL to convert amount from external to internal format.
         "! E.g. 9 HUF should be converted to 0.09 in internatl field, 9 PLN to 9.00 PLN.
         "! Use if data comes from external source.
         "! Don't use if data comes from internal source, e.g. table wit currency fields, since SAP already formats it
-        convert_currrency_to_internal type abap_bool,
+        convert_currrency_to_internal TYPE abap_bool,
       END OF t_config.
 
     METHODS:
@@ -30,7 +30,10 @@ CLASS zcl_data_to_table_import DEFINITION PUBLIC FINAL CREATE PUBLIC.
       "! @parameter target | <p class="shorttext synchronized" lang="en">Get from ZCL_DTTI_TARGET_FACTORY. Updated in function unless user cancelled.</p>
       "! @parameter user_confirmed | <p class="shorttext synchronized" lang="en">Returns abap_true if user confirmed, and abap_false if cancelled</p>
       run_mapping IMPORTING source TYPE REF TO zif_dtti_source target TYPE REF TO zif_dtti_target config TYPE t_config OPTIONAL
-                  RETURNING VALUE(user_confirmed) TYPE abap_bool.
+                  RETURNING VALUE(user_confirmed) TYPE abap_bool,
+                        "! Tries to map without user input - useful for background mapping etc.
+      try_mapping IMPORTING source TYPE REF TO zif_dtti_source target TYPE REF TO zif_dtti_target config TYPE t_config OPTIONAL
+                  RAISING zcx_dtti_exception.
 
   PRIVATE SECTION.
     TYPES:
@@ -110,7 +113,7 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
       DATA(popup) = NEW lcl_new_column( ).
       mapping_info->source_col = popup->get_column( data_table = REF #( fields_to_select ) old_column = alv-mapping->mapping_ext[ KEY field field = mapping_info->target_col ]-source_field ).
     ENDIF.
-    alv-mapping->mapping_ext[ field = mapping_info->target_col ]-source_field = mapping_info->source_col.
+    alv-mapping->mapping_ext[ key field field = mapping_info->target_col ]-source_field = mapping_info->source_col.
 
     alv-mapping->refresh_mapping_metainfo( source->source_field_info ).
     refresh_mapping( ).
@@ -260,4 +263,14 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
     alv-target->refresh( ).
   ENDMETHOD.
 
+  METHOD try_mapping.
+    me->config = config.
+    me->target = target.
+    me->source = source.
+
+    initialize_alvs( ).
+    alv-target->unmapped_cols_visible = xsdbool( config-hide_unmapped_cols = abap_false ).
+    try_to_match_fields( ).
+    close_alvs( ).
+  ENDMETHOD.
 ENDCLASS.

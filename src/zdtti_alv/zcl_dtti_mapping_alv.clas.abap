@@ -8,7 +8,6 @@ CLASS zcl_dtti_mapping_alv DEFINITION PUBLIC INHERITING FROM zcl_ea_alv_table CR
       BEGIN OF t_mapping.
         INCLUDE TYPE zif_dtti_target=>t_target.
       TYPES:
-        conversion_exit_input TYPE funcnam,
         key_info              TYPE string,
         required_info         TYPE string,
         source_field_button   TYPE string,
@@ -57,12 +56,6 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
       map->key_info = COND #( WHEN map->is_key = abap_true THEN '@3V@' ELSE '' ).
       map->required_info = COND #( WHEN map->is_required = abap_true THEN '@8R@' ELSE '' ).
       map->cell_style = VALUE #( ( fieldname = 'SOURCE_FIELD_BUTTON' style = cl_gui_alv_grid=>mc_style_button ) ).
-      IF map->type IS INSTANCE OF cl_abap_elemdescr.
-        DATA(edit_mask) = CAST cl_abap_elemdescr( map->type )->edit_mask.
-        IF edit_mask IS NOT INITIAL.
-          map->conversion_exit_input = |CONVERSION_EXIT_{ edit_mask+2(5) }_INPUT|.
-        ENDIF.
-      ENDIF.
     ENDLOOP.
 
     refresh_mapping_metainfo( VALUE #( ) ).
