@@ -31,7 +31,7 @@ CLASS zcl_dtti_target_base IMPLEMENTATION.
 
   METHOD zif_dtti_target~set_target_table_info.
     table_info = info.
-    refresh_needed = abap_true.
+    me->refresh_needed = refresh_needed.
   ENDMETHOD.
 
   METHOD refresh_table_structure.

@@ -17,10 +17,13 @@ INTERFACE zif_dtti_target PUBLIC.
     END OF t_target,
     tt_target TYPE STANDARD TABLE OF t_target WITH EMPTY KEY
     WITH UNIQUE SORTED KEY field COMPONENTS field.
+
   METHODS:
     get_target_table RETURNING VALUE(target_table) TYPE REF TO data,
     get_target_table_info RETURNING VALUE(info) TYPE tt_target,
-    set_target_table_info IMPORTING info TYPE tt_target,
+    "! @parameter refresh_needed | <p class="shorttext synchronized" lang="en">Set to false only if table reference doens't need refresh,
+    "! so e.g. you want to mass change source and stuff like that</p>
+    set_target_table_info IMPORTING info TYPE tt_target refresh_needed TYPE abap_bool DEFAULT abap_true,
     set_field_info IMPORTING field_info TYPE t_target,
     set_field_is_key IMPORTING field TYPE fieldname is_key TYPE abap_bool DEFAULT abap_true,
     set_field_is_required IMPORTING field TYPE fieldname is_required TYPE abap_bool DEFAULT abap_true,

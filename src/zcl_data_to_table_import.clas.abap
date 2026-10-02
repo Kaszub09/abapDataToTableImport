@@ -113,7 +113,7 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
       DATA(popup) = NEW lcl_new_column( ).
       mapping_info->source_col = popup->get_column( data_table = REF #( fields_to_select ) old_column = alv-mapping->mapping_ext[ KEY field field = mapping_info->target_col ]-source_field ).
     ENDIF.
-    alv-mapping->mapping_ext[ key field field = mapping_info->target_col ]-source_field = mapping_info->source_col.
+    alv-mapping->mapping_ext[ KEY field field = mapping_info->target_col ]-source_field = mapping_info->source_col.
 
     alv-mapping->refresh_mapping_metainfo( source->source_field_info ).
     refresh_mapping( ).
@@ -236,7 +236,7 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
       RETURN.
     ENDIF.
     refresh_mapping( ).
-    target->set_target_table_info( CORRESPONDING #( alv-mapping->mapping_ext ) ).
+    target->set_target_table_info( info =  CORRESPONDING #( alv-mapping->mapping_ext ) refresh_needed = abap_false ).
     user_confirmed = abap_true.
     LEAVE TO SCREEN 0.
   ENDMETHOD.
