@@ -11,6 +11,7 @@ INTERFACE zif_dtti_target PUBLIC.
       is_required           TYPE abap_bool,
       is_hidden             TYPE abap_bool,
       conversion_exit_input TYPE funcnam,
+      use_conv_exit         TYPE abap_bool,
       source_field          TYPE fieldname,
       "! Fill manually if needed
       currency_field        TYPE fieldname,
@@ -32,6 +33,7 @@ INTERFACE zif_dtti_target PUBLIC.
     set_field_description IMPORTING field TYPE fieldname description TYPE csequence,
     set_currency_field IMPORTING field TYPE fieldname currency_field TYPE fieldname,
     set_field_conv_exit_input IMPORTING field TYPE fieldname conv_exit_input TYPE funcnam,
+    set_field_use_conv_exit IMPORTING field TYPE fieldname use_conv_exit TYPE abap_bool DEFAULT abap_true,
     set_field_source IMPORTING field TYPE fieldname source_field TYPE fieldname,
     remove_field IMPORTING field TYPE fieldname.
 ENDINTERFACE.

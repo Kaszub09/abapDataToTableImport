@@ -1,4 +1,5 @@
-CLASS zcl_dtti_mapping_alv DEFINITION PUBLIC INHERITING FROM zcl_ea_alv_table CREATE PRIVATE GLOBAL FRIENDS zcl_data_to_table_import.
+CLASS zcl_dtti_mapping_alv DEFINITION PUBLIC INHERITING FROM zcl_ea_alv_table CREATE PRIVATE
+  GLOBAL FRIENDS zcl_data_to_table_import.
 
   PUBLIC SECTION.
     INTERFACES:
@@ -8,11 +9,12 @@ CLASS zcl_dtti_mapping_alv DEFINITION PUBLIC INHERITING FROM zcl_ea_alv_table CR
       BEGIN OF t_mapping.
         INCLUDE TYPE zif_dtti_target=>t_target.
       TYPES:
-        key_info              TYPE string,
-        required_info         TYPE string,
-        source_field_button   TYPE string,
-        color                 TYPE lvc_t_scol,
-        cell_style            TYPE columns->tt_cell_style_col,
+        key_info                    TYPE string,
+        required_info               TYPE string,
+        source_field_button         TYPE string,
+        change_use_conv_exit_button TYPE string,
+        color                       TYPE lvc_t_scol,
+        cell_style                  TYPE columns->tt_cell_style_col,
       END OF t_mapping,
       tt_mapping TYPE STANDARD TABLE OF t_mapping WITH EMPTY KEY
       WITH UNIQUE SORTED KEY field COMPONENTS field.
@@ -35,6 +37,14 @@ CLASS zcl_dtti_mapping_alv DEFINITION PUBLIC INHERITING FROM zcl_ea_alv_table CR
       on_drop REDEFINITION.
 
   PRIVATE SECTION.
+    CONSTANTS:
+      BEGIN OF c_icon,
+        key                TYPE icon_d VALUE '@3V@',
+        required           TYPE icon_d VALUE '@8R@',
+        use_conv_exit      TYPE icon_d VALUE '@0V@',
+        dont_use_conv_exit TYPE icon_d VALUE '@0W@',
+      END OF c_icon.
+
     METHODS:
       prepare_columns,
       get_color_tab IMPORTING color TYPE lvc_col RETURNING VALUE(color_tab) TYPE lvc_t_scol.
@@ -53,9 +63,14 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
 
     "Some mapping info that can be set once
     LOOP AT mapping_ext REFERENCE INTO DATA(map).
-      map->key_info = COND #( WHEN map->is_key = abap_true THEN '@3V@' ELSE '' ).
-      map->required_info = COND #( WHEN map->is_required = abap_true THEN '@8R@' ELSE '' ).
-      map->cell_style = VALUE #( ( fieldname = 'SOURCE_FIELD_BUTTON' style = cl_gui_alv_grid=>mc_style_button ) ).
+      map->key_info = COND #( WHEN map->is_key = abap_true THEN c_icon-key ELSE '' ).
+      map->required_info = COND #( WHEN map->is_required = abap_true THEN c_icon-required ELSE '' ).
+      map->cell_style = VALUE #( style = cl_gui_alv_grid=>mc_style_button ( fieldname = 'SOURCE_FIELD_BUTTON' ) ).
+      IF map->conversion_exit_input IS NOT INITIAL.
+        map->change_use_conv_exit_button = COND #( WHEN map->use_conv_exit = abap_true THEN c_icon-use_conv_exit ELSE c_icon-dont_use_conv_exit ).
+        INSERT VALUE #( style = cl_gui_alv_grid=>mc_style_button fieldname = 'CHANGE_USE_CONV_EXIT_BUTTON' ) INTO TABLE map->cell_style.
+      ENDIF.
+
     ENDLOOP.
 
     refresh_mapping_metainfo( VALUE #( ) ).
@@ -71,8 +86,22 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD on_button_click.
-    IF es_row_no-row_id = 0. RETURN. ENDIF.
-    RAISE EVENT zif_dtti_change_mapping_event~change_mapping EXPORTING mapping_info = NEW #( target_col = mapping_ext[ es_row_no-row_id ]-field ).
+    IF es_row_no-row_id = 0.
+      RETURN.
+    ENDIF.
+    DATA(row) = REF #( mapping_ext[ es_row_no-row_id ] ).
+    CASE es_col_id-fieldname.
+      WHEN 'SOURCE_FIELD_BUTTON'.
+        RAISE EVENT zif_dtti_change_mapping_event~change_mapping EXPORTING mapping_info = NEW #( target_col = row->field ).
+
+      WHEN 'CHANGE_USE_CONV_EXIT_BUTTON'.
+        IF row->conversion_exit_input IS NOT INITIAL.
+          row->use_conv_exit = xsdbool( row->use_conv_exit = abap_false ).
+          row->change_use_conv_exit_button = COND #( WHEN row->use_conv_exit = abap_true THEN c_icon-use_conv_exit ELSE c_icon-dont_use_conv_exit ).
+          RAISE EVENT zif_dtti_change_mapping_event~change_mapping EXPORTING mapping_info = NEW #( ).
+        ENDIF.
+
+    ENDCASE.
   ENDMETHOD.
 
   METHOD refresh_mapping_metainfo.
@@ -90,7 +119,8 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
     columns->set_as_hidden( 'IS_KEY' ).
     columns->set_as_hidden( 'IS_REQUIRED' ).
     columns->set_as_hidden( 'IS_HIDDEN' ).
-    columns->set_as_hidden( 'CONVERSION_EXIT_INPUT' ).
+    columns->fc[ KEY name fieldname = 'CONVERSION_EXIT_INPUT' ]-no_out = abap_true.
+    columns->set_as_hidden( 'USE_CONV_EXIT' ).
     columns->set_as_hidden( 'CURRENCY_FIELD' ).
 
     columns->move_column( column_to_move = 'FIELD_DESCRIPTION' before = 'IS_KEY' ).
@@ -105,11 +135,13 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
     columns->set_fixed_text( column = 'REQUIRED_INFO' text = TEXT-c04 ).
     columns->set_fixed_text( column = 'SOURCE_FIELD' text = TEXT-c05 ).
     columns->set_fixed_text( column = 'SOURCE_FIELD_BUTTON' text = TEXT-c06 ).
+    columns->set_fixed_text( column = 'CHANGE_USE_CONV_EXIT_BUTTON' text = TEXT-c07 ).
   ENDMETHOD.
 
   METHOD get_color_tab.
     color_tab = VALUE #( color = VALUE #( col = color ) ( fname  = 'FIELD' ) ( fname  = 'FIELD_DESCRIPTION' )
-                ( fname  = 'KEY_INFO' ) ( fname  = 'REQUIRED_INFO' ) ( fname  = 'SOURCE_FIELD' ) ( fname  = 'SOURCE_FIELD_BUTTON' ) ).
+                ( fname  = 'KEY_INFO' ) ( fname  = 'REQUIRED_INFO' ) ( fname  = 'SOURCE_FIELD' ) ( fname  = 'SOURCE_FIELD_BUTTON' )
+                ( fname  = 'CHANGE_USE_CONV_EXIT_BUTTON' )      ).
   ENDMETHOD.
 
   METHOD on_drag.
@@ -130,5 +162,4 @@ CLASS zcl_dtti_mapping_alv IMPLEMENTATION.
     mapping_info->target_col = mapping_ext[ e_row-index ]-field.
     RAISE EVENT zif_dtti_change_mapping_event~change_mapping EXPORTING mapping_info = mapping_info.
   ENDMETHOD.
-
 ENDCLASS.

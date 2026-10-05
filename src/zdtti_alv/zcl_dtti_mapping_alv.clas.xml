@@ -54,6 +54,12 @@
      <ENTRY>Source - description</ENTRY>
      <LENGTH>20</LENGTH>
     </item>
+    <item>
+     <ID>I</ID>
+     <KEY>C07</KEY>
+     <ENTRY>Use conv exit</ENTRY>
+     <LENGTH>24</LENGTH>
+    </item>
    </TPOOL>
    <I18N_TPOOL>
     <item>
@@ -63,7 +69,7 @@
        <ID>I</ID>
        <KEY>001</KEY>
        <ENTRY>Przypisz źrodłowe kolumny do wymaganych pól. Drag&amp;Drop.</ENTRY>
-       <LENGTH>55</LENGTH>
+       <LENGTH>69</LENGTH>
       </item>
       <item>
        <ID>I</ID>
@@ -75,13 +81,13 @@
        <ID>I</ID>
        <KEY>C02</KEY>
        <ENTRY>Pole doc. - opis</ENTRY>
-       <LENGTH>16</LENGTH>
+       <LENGTH>20</LENGTH>
       </item>
       <item>
        <ID>I</ID>
        <KEY>C03</KEY>
        <ENTRY>Kluczowe</ENTRY>
-       <LENGTH>8</LENGTH>
+       <LENGTH>9</LENGTH>
       </item>
       <item>
        <ID>I</ID>
@@ -99,7 +105,13 @@
        <ID>I</ID>
        <KEY>C06</KEY>
        <ENTRY>Źródło - opis</ENTRY>
-       <LENGTH>13</LENGTH>
+       <LENGTH>20</LENGTH>
+      </item>
+      <item>
+       <ID>I</ID>
+       <KEY>C07</KEY>
+       <ENTRY>Użyj conv exit</ENTRY>
+       <LENGTH>24</LENGTH>
       </item>
      </TEXTPOOL>
     </item>

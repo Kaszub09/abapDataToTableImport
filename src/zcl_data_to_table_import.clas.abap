@@ -105,6 +105,7 @@ CLASS zcl_data_to_table_import IMPLEMENTATION.
 
   METHOD change_mapping.
     IF mapping_info->target_col IS INITIAL.
+      refresh_mapping( ).
       RETURN.
     ENDIF.
 

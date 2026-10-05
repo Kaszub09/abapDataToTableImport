@@ -117,4 +117,8 @@ CLASS zcl_dtti_target_base IMPLEMENTATION.
   METHOD zif_dtti_target~set_field_source.
     table_info[ KEY field field = field ]-source_field = source_field.
   ENDMETHOD.
+
+  METHOD zif_dtti_target~set_field_use_conv_exit.
+    table_info[ KEY field field = field ]-use_conv_exit = use_conv_exit.
+  ENDMETHOD.
 ENDCLASS.

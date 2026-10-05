@@ -46,7 +46,7 @@
     <item>
      <ID>I</ID>
      <KEY>006</KEY>
-     <ENTRY>Error in conversion function &apos;&amp;1&apos;</ENTRY>
+     <ENTRY>&amp;1 Error in conv exit &apos;&amp;2&apos;.</ENTRY>
      <LENGTH>66</LENGTH>
     </item>
    </TPOOL>
@@ -87,7 +87,7 @@
       <item>
        <ID>I</ID>
        <KEY>006</KEY>
-       <ENTRY>Błąd w funkcji konwersji &apos;&amp;1&apos;</ENTRY>
+       <ENTRY>&amp;1 Błąd w conv exit &apos;&amp;2&apos;.</ENTRY>
        <LENGTH>66</LENGTH>
       </item>
      </TEXTPOOL>

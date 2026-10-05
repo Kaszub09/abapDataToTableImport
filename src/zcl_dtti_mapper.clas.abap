@@ -41,8 +41,9 @@ CLASS zcl_dtti_mapper IMPLEMENTATION.
         ASSIGN COMPONENT map->source_field OF STRUCTURE <source_row> TO FIELD-SYMBOL(<source_field>).
         ASSIGN COMPONENT map->field OF STRUCTURE <target_row> TO FIELD-SYMBOL(<target_field>).
 
-        DATA(error) = try_to_map( EXPORTING type_kind = map->type->type_kind source_field = <source_field> conversion_exit_input = map->conversion_exit_input
-                                  CHANGING target_field = <target_field> ).
+        DATA(error) = try_to_map( EXPORTING type_kind = map->type->type_kind source_field = <source_field>
+                conversion_exit_input = COND #( WHEN map->use_conv_exit = abap_true THEN map->conversion_exit_input ELSE '' )
+            CHANGING target_field = <target_field> ).
 
         IF convert_currrency_to_internal = abap_true AND map->currency_field IS NOT INITIAL AND strlen( error ) = 0.
           DATA(currency) = VALUE waers_curc( ).
@@ -84,7 +85,11 @@ CLASS zcl_dtti_mapper IMPLEMENTATION.
         IF conversion_exit_input IS NOT INITIAL.
           CALL FUNCTION conversion_exit_input EXPORTING input = source_field IMPORTING output = target_field EXCEPTIONS OTHERS = 1.
           IF sy-subrc <> 0.
-            RAISE EXCEPTION TYPE zcx_dtti_exception EXPORTING custom_message = replace( val = TEXT-006 sub = '&1' with = conversion_exit_input occ = 0 ).
+            DATA(message) = ||.
+            IF sy-msgno IS NOT INITIAL.
+              MESSAGE ID sy-msgid TYPE 'E' NUMBER sy-msgno WITH sy-msgv1 sy-msgv2 sy-msgv3 sy-msgv4 INTO message.
+            ENDIF.
+            RAISE EXCEPTION TYPE zcx_dtti_exception EXPORTING custom_message = replace( val = replace( val = TEXT-006 sub = '&1' with = message occ = 0 ) sub = '&2' with = conversion_exit_input occ = 0 ).
           ENDIF.
           RETURN.
         ENDIF.
